@@ -18,6 +18,7 @@ const Table = ({ columns, data }) => {
                     setFilter(e.target.value || undefined)
                 }}
                 placeholder={`Search`}
+                className="form-control form-control-sm"
           />
         );
     }
@@ -41,12 +42,12 @@ const Table = ({ columns, data }) => {
 
     return (
         <div>
-            <table {...getTableProps()}>
-                <thead>
+            <table {...getTableProps()} className="table table-striped table-sm table-bordered table-hover">
+                <thead className="table-dark" style={{'position': 'sticky', 'top': 0}}>
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        <th {...column.getHeaderProps(column.getSortByToggleProps())} className="text-center align-middle">
                             {column.render('Header')}
                             <span>
                                 {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
@@ -63,24 +64,24 @@ const Table = ({ columns, data }) => {
                     return (
                     <tr {...row.getRowProps()}>
                         {row.cells.map(cell => {
-                            return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                            return <td {...cell.getCellProps()} className="text-center align-middle" >{cell.render('Cell')}</td>
                         })}
                     </tr>
                     )
                 })}
                 </tbody>
             </table>
-            <div className="pagination">
-                <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+            <div className="mt-3">
+                <button onClick={() => gotoPage(0)} disabled={!canPreviousPage} className="btn btn-outline-dark">
                 {'<<'}
                 </button>{' '}
-                <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-outline-dark">
                 {'<'}
                 </button>{' '}
-                <button onClick={() => nextPage()} disabled={!canNextPage}>
+                <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-outline-dark">
                 {'>'}
                 </button>{' '}
-                <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} className="btn btn-outline-dark">
                 {'>>'}
                 </button>{' '}
                 <span>
