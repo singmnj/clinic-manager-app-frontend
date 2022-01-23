@@ -1,80 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from './Table';
+import { toast } from 'react-toastify';
+
+import patientService from '../services/patients';
 
 const TablePage = () => {
 
-    const data = React.useMemo(() => [
-        {
-            opd: 'A1',
-            firstName: 'Kim',
-            lastName: 'Parrish',
-            address: '4420 Valley Street, Garnerville, NY 10923',
-            gender: 'F',
-            phone: '1213243243',
-            age: 24,
-            city: 'Patiala',
-            notes: 'yup',
-            due: 900
-        },
-        {
-            opd: 'A1',
-            firstName: 'Kim',
-            lastName: 'Parrish',
-            address: '4420 Valley Street, Garnerville, NY 10923',
-            gender: 'F',
-            phone: '1213243243',
-            age: 24,
-            city: 'Patiala',
-            notes: 'yup',
-            due: 900
-        },{
-            opd: 'A1',
-            firstName: 'Kim',
-            lastName: 'Parrish',
-            address: '4420 Valley Street, Garnerville, NY 10923',
-            gender: 'F',
-            phone: '1213243243',
-            age: 24,
-            city: 'Patiala',
-            notes: 'yup',
-            due: 900
-        },{
-            opd: 'A1',
-            firstName: 'Kim',
-            lastName: 'Parrish',
-            address: '4420 Valley Street, Garnerville, NY 10923',
-            gender: 'F',
-            phone: '1213243243',
-            age: 24,
-            city: 'Patiala',
-            notes: 'yup',
-            due: 900
-        },{
-            opd: 'A1',
-            firstName: 'Kim',
-            lastName: 'Parrish',
-            address: '4420 Valley Street, Garnerville, NY 10923',
-            gender: 'F',
-            phone: '1213243243',
-            age: 24,
-            city: 'Patiala',
-            notes: 'yup',
-            due: 900
-        },
-        {
-            opd: 'A1',
-            firstName: 'Kim',
-            lastName: 'Parrish',
-            address: '4420 Valley Street, Garnerville, NY 10923',
-            gender: 'F',
-            phone: '1213243243',
-            age: 24,
-            city: 'Patiala',
-            notes: 'yup',
-            due: 900
-        }
-    ], []
-    );
+    const [patients, setPatients] = useState([]);
+
+    const fetchPatients = () => {
+        patientService.getAll().then(initialPatients => {
+            setPatients(initialPatients);
+        }).catch(error => {
+            toast("Error occurred while getting Patients");
+        });
+    };
+
+    useEffect(fetchPatients, []);
 
     const columns = React.useMemo(() => [
         {
@@ -127,7 +69,7 @@ const TablePage = () => {
     );
 
     return(
-      <Table columns={columns} data={data} />
+      <Table columns={columns} data={patients} />
     );
 };
 

@@ -2,9 +2,18 @@ import React from 'react';
 import { useForm, useField, splitFormProps } from "react-form";
 import { toast } from 'react-toastify';
 
-async function sendToFakeServer(values) {
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return values;
+import patientService from '../services/patients';
+
+const savePatient = (patientObject, resetFormFunc) => {
+	console.log(patientObject);
+	patientService.create(patientObject).then(response => {	
+		console.log(response);
+		toast(`Patient ${patientObject.opd} Saved`);
+		resetFormFunc();
+	}).catch(error => {
+		console.error(error);
+		toast('Error occurred while Saving Patient');
+	});
 }
 
 const InputField = React.forwardRef((props, ref) => {
@@ -31,7 +40,7 @@ const InputField = React.forwardRef((props, ref) => {
   );
 });
 
-async function validateField(value) {
+const validateField = (value) => {
   if (!value) {
     return "This field is required";
   }
@@ -40,16 +49,29 @@ async function validateField(value) {
 
 const AddPatientPage = () => {
 
+	const defaultValues = React.useMemo(
+		() => ({
+			opd: "",
+			firstName: "",
+			lastName: "",
+			phone: "",
+			address: "",
+			city: "",
+			notes: "",
+			gender: "M",
+			dob: "1990-01-01"
+		}),
+		[]
+	  );
+
     const {
         Form,
-        meta: { isSubmitting, canSubmit }
+        meta: { isSubmitting, canSubmit },
+		reset
       } = useForm({
+		defaultValues,
         onSubmit: async (values, instance) => {
-          // onSubmit (and everything else in React Form)
-          // has async support out-of-the-box
-          await sendToFakeServer(values);
-          toast("Wow so easy !");
-          console.log("Huzzah!");
+          await savePatient(values, reset);
         },
         debugForm: false
       });

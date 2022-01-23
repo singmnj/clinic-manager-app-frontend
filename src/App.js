@@ -16,7 +16,7 @@ const App = () => (
         <div className="col-2 m-0 p-0 position-fixed" style={{'width': '250px'}}>
           <Navbar />
         </div>
-        <div className="col-10 mt-3 mb-3" style={{'margin-left': '250px'}}>
+        <div className="col-10 mt-3 mb-3" style={{'marginLeft': '250px'}}>
           <Routes>
             <Route path="/" element={<DashboardPage />}/>
             <Route path="/patients" element={<TablePage />}/>
