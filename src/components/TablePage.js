@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import Table from './Table';
 import { toast } from 'react-toastify';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-import patientService from '../services/patients';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const TablePage = () => {
 
     const [patients, setPatients] = useState([]);
+    const axiosPrivate = useAxiosPrivate();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const fetchPatients = () => {
-        patientService.getAll().then(initialPatients => {
-            setPatients(initialPatients);
+        axiosPrivate.get('/api/patients').then(response => {
+            console.log(response.data);
+            setPatients(response.data);
         }).catch(error => {
             toast("Error occurred while getting Patients");
+            navigate('/login', {state: { from: location }, replace: true});
         });
     };
 

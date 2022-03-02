@@ -1,32 +1,32 @@
 import React from 'react';
-import { ToastContainer } from 'react-toastify';
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Navbar from './components/Navbar';
 import TablePage from './components/TablePage';
 import DashboardPage from './components/DashboardPage';
 import AddPatientPage from './components/AddPatientPage';
+import Layout from './components/Layout';
+import RequireAuth from './components/RequireAuth';
+import LoginPage from './components/LoginPage';
+import PersistLogin from './components/PersistLogin';
 
-const App = () => (
-  <BrowserRouter>
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-2 m-0 p-0 position-fixed" style={{'width': '250px'}}>
-          <Navbar />
-        </div>
-        <div className="col-10 mt-3 mb-3" style={{'marginLeft': '250px'}}>
-          <Routes>
+const App = () => {
+  return(
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+        {/* we want to protect these routes */}
+        <Route element={<PersistLogin />}>
+          <Route element={<RequireAuth />}>
+          <Route path="/" element={<Layout />}>
             <Route path="/" element={<DashboardPage />}/>
-            <Route path="/patients" element={<TablePage />}/>
-            <Route path="/add_patient" element={<AddPatientPage />}/>
-          </Routes>
-        </div>
-      </div>
-    </div>
-    <ToastContainer />
-  </BrowserRouter>
-);
+            <Route path="patients" element={<TablePage />}/>
+            <Route path="add_patient" element={<AddPatientPage />}/>
+          </Route>
+        </Route>
+      </Route>
+    </Routes>
+  );
+};
 
 export default App;
