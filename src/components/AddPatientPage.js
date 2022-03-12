@@ -2,19 +2,7 @@ import React from 'react';
 import { useForm, useField, splitFormProps } from "react-form";
 import { toast } from 'react-toastify';
 
-import patientService from '../services/patients';
-
-const savePatient = (patientObject, resetFormFunc) => {
-	console.log(patientObject);
-	patientService.create(patientObject).then(response => {	
-		console.log(response);
-		toast(`Patient ${patientObject.opd} Saved`);
-		resetFormFunc();
-	}).catch(error => {
-		console.error(error);
-		toast('Error occurred while Saving Patient');
-	});
-}
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const InputField = React.forwardRef((props, ref) => {
   // Let's use splitFormProps to get form-specific props
@@ -40,14 +28,9 @@ const InputField = React.forwardRef((props, ref) => {
   );
 });
 
-const validateField = (value) => {
-  if (!value) {
-    return "This field is required";
-  }
-  return false;
-}
-
 const AddPatientPage = () => {
+
+  const axiosPrivate = useAxiosPrivate();
 
 	const defaultValues = React.useMemo(
 		() => ({
@@ -75,6 +58,25 @@ const AddPatientPage = () => {
         },
         debugForm: false
       });
+    
+    const validateField = (value) => {
+      if (!value) {
+        return "This field is required";
+      }
+      return false;
+    }
+
+    const savePatient = (patientObject, resetFormFunc) => {
+      console.log(patientObject);
+      axiosPrivate.post('/api/patients', patientObject).then(response => {	
+        console.log(response.data);
+        toast(`Patient ${patientObject.opd} Saved`);
+        resetFormFunc();
+      }).catch(error => {
+        console.error(error);
+        toast('Error occurred while Saving Patient');
+      });
+    }
 
     return(
         <Form>

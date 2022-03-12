@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 import 'react-toastify/dist/ReactToastify.css';
 
 import TablePage from './components/TablePage';
@@ -10,6 +11,7 @@ import Layout from './components/Layout';
 import RequireAuth from './components/RequireAuth';
 import LoginPage from './components/LoginPage';
 import PersistLogin from './components/PersistLogin';
+import ViewPatientPage from './components/ViewPatientPage';
 
 const App = () => {
   return(
@@ -22,6 +24,7 @@ const App = () => {
             <Route path="/" element={<DashboardPage />}/>
             <Route path="patients" element={<TablePage />}/>
             <Route path="add_patient" element={<AddPatientPage />}/>
+            <Route path="patients/:pid" element={<ViewPatientPage />}/>
           </Route>
         </Route>
       </Route>

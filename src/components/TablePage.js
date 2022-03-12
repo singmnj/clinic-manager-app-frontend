@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Table from './Table';
 import { toast } from 'react-toastify';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
@@ -22,9 +22,30 @@ const TablePage = () => {
         });
     };
 
+    const deletePatient = (pid) => {
+        console.log('deleting pid: ', pid);
+        axiosPrivate.delete(`/api/patients/${pid}`).then(response => {
+            console.log(response.data);
+            setPatients(patients => patients.filter(patient => patient.id !== pid));
+        }).catch(error => {
+            toast("Error occurred while deleting Patient");
+        });
+    }
+
     useEffect(fetchPatients, []);
 
     const columns = React.useMemo(() => [
+        {
+            Header: 'Action',
+            accessor: 'id',
+            Cell: ({value}) => (
+                <>
+                <button onClick={() => navigate(`/patients/${value}`)} className="btn"><i className="bi bi-plus-square-fill"></i></button>
+                <button onClick={() => deletePatient(value)} className="btn"><i className="bi bi-trash3-fill"></i></button>
+                </>
+            ),
+            disableFilters: true
+        },
         {
             Header: 'OPD',
             accessor: 'opd'
@@ -52,18 +73,8 @@ const TablePage = () => {
             disableFilters: true
         },
         {
-            Header: 'Address',
-            accessor: 'address',
-            disableFilters: true
-        },
-        {
             Header: 'City',
             accessor: 'city',
-            disableFilters: true
-        },
-        {
-            Header: 'Disease',
-            accessor: 'notes',
             disableFilters: true
         },
         {

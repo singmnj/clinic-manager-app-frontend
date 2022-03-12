@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import authService from '../services/auth';
+import axiosPrivate from '../api/axios';
 
 const LoginPage = () => {
 
@@ -29,7 +29,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 		console.log(user, pwd);
-		authService.login({ username: user, password: pwd }).then(response => {
+		axiosPrivate.post('/api/auth/login', { username: user, password: pwd }).then(response => {
 			console.log(response?.data);
 			const accessToken = response?.data?.accessToken;
 			console.log(accessToken);
