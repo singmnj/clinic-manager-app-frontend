@@ -72,7 +72,7 @@ const ViewPatientPage = () => {
     const getPatientDetails = () => {
         console.log('getting patient details');
         console.log('pid : ', pid);
-        axiosPrivate.get(`/api/patients/${pid}`).then(response => {
+        axiosPrivate.get(`/patients/${pid}`).then(response => {
             console.log(response.data);
             setPatientDetails(response.data);
         }).catch(error => {
@@ -82,7 +82,7 @@ const ViewPatientPage = () => {
 
     const fetchConsultations = () => {
         console.log('pid : ', pid);
-        axiosPrivate.get(`/api/patients/${pid}/consultations`).then(response => {
+        axiosPrivate.get(`/patients/${pid}/consultations`).then(response => {
             console.log(response.data);
             setConsultations(response.data);
         }).catch(error => {
@@ -92,7 +92,7 @@ const ViewPatientPage = () => {
 
     const deleteConsultation = (pid, cid) => {
         console.log('deleting cid: ', cid);
-        axiosPrivate.delete(`/api/patients/${pid}/consultations/${cid}`).then(response => {
+        axiosPrivate.delete(`/patients/${pid}/consultations/${cid}`).then(response => {
             console.log(response.data);
             setConsultations(consultations => consultations.filter(consultations => consultations.id !== cid));
         }).catch(error => {

@@ -29,7 +29,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 		console.log(user, pwd);
-		axiosPrivate.post('/api/auth/login', { username: user, password: pwd }).then(response => {
+		axiosPrivate.post('/auth/login', { username: user, password: pwd }).then(response => {
 			console.log(response?.data);
 			const accessToken = response?.data?.accessToken;
 			console.log(accessToken);

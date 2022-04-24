@@ -68,7 +68,7 @@ const AddPatientPage = () => {
 
     const savePatient = (patientObject, resetFormFunc) => {
       console.log(patientObject);
-      axiosPrivate.post('/api/patients', patientObject).then(response => {	
+      axiosPrivate.post('/patients', patientObject).then(response => {	
         console.log(response.data);
         toast(`Patient ${patientObject.opd} Saved`);
         resetFormFunc();

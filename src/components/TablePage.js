@@ -13,7 +13,7 @@ const TablePage = () => {
     const location = useLocation();
 
     const fetchPatients = () => {
-        axiosPrivate.get('/api/patients').then(response => {
+        axiosPrivate.get('/patients').then(response => {
             console.log(response.data);
             setPatients(response.data);
         }).catch(error => {
@@ -24,7 +24,7 @@ const TablePage = () => {
 
     const deletePatient = (pid) => {
         console.log('deleting pid: ', pid);
-        axiosPrivate.delete(`/api/patients/${pid}`).then(response => {
+        axiosPrivate.delete(`/patients/${pid}`).then(response => {
             console.log(response.data);
             setPatients(patients => patients.filter(patient => patient.id !== pid));
         }).catch(error => {
