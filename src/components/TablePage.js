@@ -22,16 +22,6 @@ const TablePage = () => {
         });
     };
 
-    const deletePatient = (pid) => {
-        console.log('deleting pid: ', pid);
-        axiosPrivate.delete(`/patients/${pid}`).then(response => {
-            console.log(response.data);
-            setPatients(patients => patients.filter(patient => patient.id !== pid));
-        }).catch(error => {
-            toast("Error occurred while deleting Patient");
-        });
-    }
-
     useEffect(fetchPatients, []);
 
     const columns = React.useMemo(() => [
@@ -41,7 +31,6 @@ const TablePage = () => {
             Cell: ({value}) => (
                 <>
                 <button onClick={() => navigate(`/patients/${value}`)} className="btn"><i className="bi bi-plus-square-fill"></i></button>
-                <button onClick={() => deletePatient(value)} className="btn"><i className="bi bi-trash3-fill"></i></button>
                 </>
             ),
             disableFilters: true

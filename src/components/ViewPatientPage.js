@@ -1,40 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { toast } from 'react-toastify';
 import Table from './Table';
 
-import ConfirmationDialogModal from "./ConfirmationDialogModal";
-import EditConsultationModal from "./EditConsultationModal";
+import CustomModal from "./CustomModal";
+import EditPatient from "./EditPatient";
+import AddConsultation from "./AddConsultation";
+import EditConsultation from "./EditConsultation";
 
 const ViewPatientPage = () => {
 
     const [consultations, setConsultations] = useState([]);
     const [patientDetails, setPatientDetails] = useState();
+    const [selectedConsultation, setSelectedConsultation] = useState("");
 
-    const [showDeleteConsultationModal, setShowDeleteConsultationModal] = useState(false);
-    const [showDeletePatientModal, setShowDeletePatientModal] = useState(false);
-    const [showEditConsultationModal, setShowEditConsultationModal] = useState(false);
-    const [showEditPatientModal, setShowEditPatientModal] = useState(false);
+    const [isDeletePatientModalOpen, setIsDeletePatientModalOpen] = useState(false);
+    const [isEditPatientModalOpen, setIsEditPatientModalOpen] = useState(false);
+
+    const [isDeleteConsultationModalOpen, setIsDeleteConsultationModalOpen] = useState(false);
+    const [isAddConsultationModalOpen, setIsAddConsultationModalOpen] = useState(false);
+    const [isEditConsultationModalOpen, setIsEditConsultationModalOpen] = useState(false);
 
     const { pid } = useParams();
 
     const axiosPrivate = useAxiosPrivate();
+    const navigate = useNavigate();
 
     const columns = React.useMemo(() => [
         {
             Header: 'Action',
             accessor: 'id',
+            disableFilters: true,
             Cell: ({value}) => (
                 <>
-                <button onClick={() => editConsultation(pid, value)} className="btn"><i className="bi bi-pencil-fill"></i></button>
-                <button onClick={() => deleteConsultation(pid, value)} className="btn"><i className="bi bi-trash3-fill"></i></button>
+                <button onClick={() => {setIsEditConsultationModalOpen(true); setSelectedConsultation(value)}} className="btn"><i className="bi bi-pencil-fill"></i></button>
+                <button onClick={() => {setIsDeleteConsultationModalOpen(true); setSelectedConsultation(value)}} className="btn"><i className="bi bi-trash3-fill"></i></button>
                 </>
             )
         },
         {
             Header: 'Date',
-            accessor: 'date'
+            accessor: 'date',
+            disableFilters: true
         },
         {
             Header: 'Notes',
@@ -54,16 +62,17 @@ const ViewPatientPage = () => {
         {
             Header: 'MaramTherapy',
             accessor: 'maramTherapyDone',
-            disableFilters: true
+            disableFilters: true,
+            Cell: ({value}) => (<>{value === 'true' ? 'Y' : 'N'}</>)
         },
         {
             Header: 'Charged',
-            accessor: 'chargedAmount',
+            accessor: 'amountCharged',
             disableFilters: true
         },
         {
             Header: 'Received',
-            accessor: 'receivedAmount',
+            accessor: 'amountReceived',
             disableFilters: true
         }
         ], []
@@ -76,7 +85,7 @@ const ViewPatientPage = () => {
             console.log(response.data);
             setPatientDetails(response.data);
         }).catch(error => {
-            toast("Error occurred while Patient Details");
+            toast("Error occurred while getting Patient Details");
         });
     }
 
@@ -95,14 +104,23 @@ const ViewPatientPage = () => {
         axiosPrivate.delete(`/patients/${pid}/consultations/${cid}`).then(response => {
             console.log(response.data);
             setConsultations(consultations => consultations.filter(consultations => consultations.id !== cid));
+            setIsDeleteConsultationModalOpen(false);
+            setSelectedConsultation("");
+            toast('Consultation Deleted');
         }).catch(error => {
             toast("Error occurred while deleting Consultation");
         });
     }
 
-    const editConsultation = (pid, cid) => {
-        console.log('editing Consultation: ', cid);
-        setShowEditConsultationModal(true);
+    const deletePatient = (pid) => {
+        console.log('deleting pid: ', pid);
+        axiosPrivate.delete(`/patients/${pid}`).then(response => {
+            console.log(response.data);
+            navigate(`/patients`);
+            toast(`Patient ${patientDetails.firstName + ' ' + patientDetails.lastName} deleted`);
+        }).catch(error => {
+            toast("Error occurred while deleting Patient");
+        });
     }
 
     useEffect(fetchConsultations, []);
@@ -112,8 +130,8 @@ const ViewPatientPage = () => {
         <div> 
             <div className="mb-2">
                 <p className="d-inline h4">Patient Details</p>
-                <button onClick={() => {editConsultation(pid)}} className="mx-3 d-inline btn btn-outline-primary btn-sm"><i className="bi bi-pencil-fill"></i></button>
-                <button onClick={() => {editConsultation(pid)}} className="d-inline btn btn-outline-primary btn-sm"><i className="bi bi-trash3-fill"></i></button>
+                <button onClick={() => {setIsEditPatientModalOpen(true)}} className="mx-3 d-inline btn btn-outline-primary btn-sm"><i className="bi bi-pencil-fill"></i></button>
+                <button onClick={() => {setIsDeletePatientModalOpen(true)}} className="d-inline btn btn-outline-primary btn-sm"><i className="bi bi-trash3-fill"></i></button>
             </div>
             <div className="card border-dark mb-3">
                 <div className="card-body text-dark">
@@ -138,11 +156,26 @@ const ViewPatientPage = () => {
             </div>
             <div className="mb-2">
                 <p className="d-inline h4">Past Consultations</p>
-                <button onClick={() => {editConsultation(pid)}} className="mx-3 d-inline btn btn-outline-primary btn-sm"><i className="bi bi-plus-square-fill"></i></button>
+                <button onClick={() => setIsAddConsultationModalOpen(true)} className="mx-3 d-inline btn btn-outline-primary btn-sm"><i className="bi bi-plus-square-fill"></i></button>
             </div>
             <Table columns={columns} data={consultations} />
-            <ConfirmationDialogModal show={showDeleteConsultationModal} handleClose={() => setShowDeleteConsultationModal(false)}/>
-            <EditConsultationModal show={showEditConsultationModal} handleClose={() => setShowEditConsultationModal(false)}/>
+            <CustomModal isModalOpen={isDeletePatientModalOpen} handleClose={() => setIsDeletePatientModalOpen(false)}>
+                <p>Are you sure you want to delete this patient?</p>
+                <button onClick={() => deletePatient(pid)}>confirm</button>
+            </CustomModal>
+            <CustomModal isModalOpen={isDeleteConsultationModalOpen} handleClose={() => setIsDeleteConsultationModalOpen(false)}>
+                <p>Are you sure you want to delete this consultation?</p>
+                <button onClick={() => deleteConsultation(pid, selectedConsultation)}>confirm</button>
+            </CustomModal>
+            <CustomModal isModalOpen={isEditPatientModalOpen} handleClose={() => setIsEditPatientModalOpen(false)}>
+                <EditPatient patientDetails={patientDetails} patientId={pid} hideModal={() => setIsEditPatientModalOpen(false)} setPatientDetails={setPatientDetails}/>
+            </CustomModal>
+            <CustomModal isModalOpen={isAddConsultationModalOpen} handleClose={() => setIsAddConsultationModalOpen(false)}>
+                <AddConsultation patientId={pid} hideModal={() => setIsAddConsultationModalOpen(false)} setConsultations={setConsultations}/>
+            </CustomModal>
+            <CustomModal isModalOpen={isEditConsultationModalOpen} handleClose={() => setIsEditConsultationModalOpen(false)}>
+                <EditConsultation patientId={pid} consultationDetails={consultations.find(c => c.id === selectedConsultation)} hideModal={() => setIsEditConsultationModalOpen(false)} setConsultations={setConsultations} setSelectedConsultation={setSelectedConsultation}/>
+            </CustomModal>
         </div>
     );
 };
