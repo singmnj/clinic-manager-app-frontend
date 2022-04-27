@@ -1,8 +1,10 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
+import Logout from './Logout';
 
 const Navbar = () => {
     return(
+      <div className='position-relative'>
       <nav className="p-3 text-white bg-dark min-vh-100">
         <a className="text-white text-decoration-none" href="/">
           <span className="fs-4">CMA</span>
@@ -19,7 +21,11 @@ const Navbar = () => {
             <NavLink to="/add_patient" className="nav-link text-white">Add Patient</NavLink>
           </li>
         </ul>
+        <div className='position-absolute bottom-0 mb-3'>
+          <Logout />
+        </div>
       </nav>
+      </div>
     );
 };
 
