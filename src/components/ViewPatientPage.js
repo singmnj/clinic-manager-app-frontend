@@ -123,6 +123,12 @@ const ViewPatientPage = () => {
         });
     }
 
+    const getTotalDue = () => {
+        return consultations.reduce((acc, c) => {
+            return acc + c.amountCharged - c.amountReceived;
+        }, 0);
+    };
+
     useEffect(fetchConsultations, []);
     useEffect(getPatientDetails, []);
 
@@ -132,6 +138,7 @@ const ViewPatientPage = () => {
                 <p className="d-inline h4">Patient Details</p>
                 <button onClick={() => {setIsEditPatientModalOpen(true)}} className="mx-3 d-inline btn btn-outline-primary btn-sm"><i className="bi bi-pencil-fill"></i></button>
                 <button onClick={() => {setIsDeletePatientModalOpen(true)}} className="d-inline btn btn-outline-primary btn-sm"><i className="bi bi-trash3-fill"></i></button>
+                <p className="d-inline h4 float-end">Total Due : ₹{getTotalDue()}</p>
             </div>
             <div className="card border-dark mb-3">
                 <div className="card-body text-dark">

@@ -35,7 +35,7 @@ const AddConsultation = ({ patientId, hideModal, setConsultations }) => {
     const defaultValues = React.useMemo(
 		() => ({
             date: new Date().toISOString().substring(0,10),
-			notes: "",
+			      notes: "",
             medicines: "",
             days: 0,
             amountCharged: 0,
@@ -64,6 +64,9 @@ const AddConsultation = ({ patientId, hideModal, setConsultations }) => {
     }
 
     const saveConsultation = (consultationObject) => {
+        consultationObject.amountCharged = parseInt(consultationObject.amountCharged);
+        consultationObject.amountReceived = parseInt(consultationObject.amountReceived);
+        consultationObject.days = parseInt(consultationObject.days);
         console.log(consultationObject);
         axiosPrivate.post(`/patients/${patientId}/consultations`, consultationObject).then(response => {	
           console.log(response.data);

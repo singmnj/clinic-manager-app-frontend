@@ -55,8 +55,11 @@ const EditConsultation = ({ patientId, consultationDetails, hideModal, setConsul
     });
 
     const editConsultation = (consultationObject) => {
-        console.log(consultationObject);
         consultationObject.id = consultationDetails.id;
+        consultationObject.amountCharged = parseInt(consultationObject.amountCharged);
+        consultationObject.amountReceived = parseInt(consultationObject.amountReceived);
+        consultationObject.days = parseInt(consultationObject.days);
+        console.log(consultationObject);
         axiosPrivate.put(`/patients/${patientId}/consultations/${consultationObject.id}`, consultationObject).then(response => {	
           console.log(response.data);
           toast(`Consultation Edited`);
