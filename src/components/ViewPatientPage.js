@@ -161,11 +161,11 @@ const ViewPatientPage = () => {
             <Table columns={columns} data={consultations} />
             <CustomModal isModalOpen={isDeletePatientModalOpen} handleClose={() => setIsDeletePatientModalOpen(false)}>
                 <p>Are you sure you want to delete this patient?</p>
-                <button onClick={() => deletePatient(pid)}>confirm</button>
+                <button onClick={() => deletePatient(pid)} className='btn btn-danger'>confirm</button>
             </CustomModal>
             <CustomModal isModalOpen={isDeleteConsultationModalOpen} handleClose={() => setIsDeleteConsultationModalOpen(false)}>
                 <p>Are you sure you want to delete this consultation?</p>
-                <button onClick={() => deleteConsultation(pid, selectedConsultation)}>confirm</button>
+                <button onClick={() => deleteConsultation(pid, selectedConsultation)} className='btn btn-danger'>confirm</button>
             </CustomModal>
             <CustomModal isModalOpen={isEditPatientModalOpen} handleClose={() => setIsEditPatientModalOpen(false)}>
                 <EditPatient patientDetails={patientDetails} patientId={pid} hideModal={() => setIsEditPatientModalOpen(false)} setPatientDetails={setPatientDetails}/>
