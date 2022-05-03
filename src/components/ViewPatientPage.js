@@ -78,27 +78,6 @@ const ViewPatientPage = () => {
         ], []
     );
 
-    const getPatientDetails = () => {
-        console.log('getting patient details');
-        console.log('pid : ', pid);
-        axiosPrivate.get(`/patients/${pid}`).then(response => {
-            console.log(response.data);
-            setPatientDetails(response.data);
-        }).catch(error => {
-            toast("Error occurred while getting Patient Details");
-        });
-    }
-
-    const fetchConsultations = () => {
-        console.log('pid : ', pid);
-        axiosPrivate.get(`/patients/${pid}/consultations`).then(response => {
-            console.log(response.data);
-            setConsultations(response.data);
-        }).catch(error => {
-            toast("Error occurred while getting Consultations");
-        });
-    }
-
     const deleteConsultation = (pid, cid) => {
         console.log('deleting cid: ', cid);
         axiosPrivate.delete(`/patients/${pid}/consultations/${cid}`).then(response => {
@@ -129,8 +108,31 @@ const ViewPatientPage = () => {
         }, 0);
     };
 
-    useEffect(fetchConsultations, []);
-    useEffect(getPatientDetails, []);
+    //get patient details and consultations when page loads
+    useEffect(() => {
+        const controller = new AbortController();
+        //get patient details
+        axiosPrivate.get(`/patients/${pid}`,{
+            signal: controller.signal
+        }).then(response => {
+            console.log(response.data);
+            setPatientDetails(response.data);
+        }).catch(error => {
+            if(error.message !== 'canceled')
+                toast("Error occurred while getting Patient Details");
+        });
+        //get consultations
+        axiosPrivate.get(`/patients/${pid}/consultations`, {
+            signal: controller.signal
+        }).then(response => {
+            console.log(response.data);
+            setConsultations(response.data);
+        }).catch(error => {
+            if(error.message !== 'canceled')
+                toast("Error occurred while getting Consultations");
+        });
+        return () => controller.abort();
+    }, []);
 
     return(
         <div> 

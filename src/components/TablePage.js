@@ -12,17 +12,23 @@ const TablePage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const fetchPatients = () => {
-        axiosPrivate.get('/patients').then(response => {
+    //get all the patients when page loads
+    useEffect(() => {
+        const controller = new AbortController();
+        axiosPrivate.get('/patients', {
+            signal: controller.signal
+        }).then(response => {
             console.log(response.data);
             setPatients(response.data);
         }).catch(error => {
-            toast("Error occurred while getting Patients");
-            navigate('/login', {state: { from: location }, replace: true});
+            if(error.message !== 'canceled') {
+                toast("Error occurred while getting Patients");
+                console.log('error occured while getting patients: ', error);
+                navigate('/login', {state: { from: location }, replace: true});
+            }
         });
-    };
-
-    useEffect(fetchPatients, []);
+        return () => controller.abort();
+    }, []);
 
     const columns = React.useMemo(() => [
         {

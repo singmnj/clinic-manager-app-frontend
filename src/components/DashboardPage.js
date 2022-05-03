@@ -27,15 +27,6 @@ const DashboardPage = () => {
 
     const [stats, setStats] = useState({});
 
-    const getStats = () => {
-        axiosPrivate.get('/stats').then(response => {
-            console.log(response.data);
-            setStats(response.data);
-        }).catch(error => {
-            toast("Error occurred while getting Stats");
-        });
-    };
-
     const getConsultationsChartData = () => {
         let labels = [];
         for(let i = 6; i >= 0; i--){
@@ -76,7 +67,22 @@ const DashboardPage = () => {
         return data;
     };
 
-    useEffect(getStats, []);
+    //get the stats when page loads
+    useEffect(() => {
+        const controller = new AbortController();
+        axiosPrivate.get('/stats', {
+            signal: controller.signal
+        }).then(response => {
+            console.log(response.data);
+            setStats(response.data);
+        }).catch(error => {
+            if(error.message !== 'canceled') {
+                toast("Error occurred while getting Stats");
+                console.log('error occured while getting stats: ', error);
+            }
+        });
+        return () => controller.abort();
+    }, []);
 
     return(
         <div className='ms-2'>
@@ -127,7 +133,7 @@ const DashboardPage = () => {
                                         stats.topPatientsWithDues?.map((p,index) => {
                                             return(
                                                 <tr key={index}>
-                                                    <td>{index + 1}</td>
+                                                    <td>{p.opd}</td>
                                                     <td>{`${p.firstName} ${p.lastName}`}</td>
                                                     <td>{`₹ ${p.due}`}</td>
                                                 </tr>
