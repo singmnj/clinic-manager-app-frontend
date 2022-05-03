@@ -26,6 +26,7 @@ const DashboardPage = () => {
     const axiosPrivate = useAxiosPrivate();
 
     const [stats, setStats] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     const getConsultationsChartData = () => {
         let labels = [];
@@ -75,6 +76,7 @@ const DashboardPage = () => {
         }).then(response => {
             console.log(response.data);
             setStats(response.data);
+            setIsLoading(false);
         }).catch(error => {
             if(error.message !== 'canceled') {
                 toast("Error occurred while getting Stats");
@@ -85,6 +87,8 @@ const DashboardPage = () => {
     }, []);
 
     return(
+        <>
+        { isLoading ? <p>Loading...</p> :
         <div className='ms-2'>
             <h3>Dashboard</h3>
             <hr/>
@@ -194,6 +198,8 @@ const DashboardPage = () => {
                 </div>
             </div>
         </div>
+        }
+        </>
     );
 };
 

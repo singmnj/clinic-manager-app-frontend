@@ -15,6 +15,9 @@ const ViewPatientPage = () => {
     const [patientDetails, setPatientDetails] = useState();
     const [selectedConsultation, setSelectedConsultation] = useState("");
 
+    const [isLoadingPatientDetails, setIsLoadingPatientDetails] = useState(true);
+    const [isLoadingConsultations, setIsLoadingConsultations] = useState(true);
+
     const [isDeletePatientModalOpen, setIsDeletePatientModalOpen] = useState(false);
     const [isEditPatientModalOpen, setIsEditPatientModalOpen] = useState(false);
 
@@ -117,6 +120,7 @@ const ViewPatientPage = () => {
         }).then(response => {
             console.log(response.data);
             setPatientDetails(response.data);
+            setIsLoadingPatientDetails(false);
         }).catch(error => {
             if(error.message !== 'canceled')
                 toast("Error occurred while getting Patient Details");
@@ -127,6 +131,7 @@ const ViewPatientPage = () => {
         }).then(response => {
             console.log(response.data);
             setConsultations(response.data);
+            setIsLoadingConsultations(false);
         }).catch(error => {
             if(error.message !== 'canceled')
                 toast("Error occurred while getting Consultations");
@@ -143,6 +148,7 @@ const ViewPatientPage = () => {
                 <p className="d-inline h4 float-end">Total Due : ₹{getTotalDue()}</p>
             </div>
             <div className="card border-dark mb-3">
+                { isLoadingPatientDetails ? <p>Loading...</p> :
                 <div className="card-body text-dark">
                     <h5 className="card-title">{patientDetails?.firstName + ' ' + patientDetails?.lastName}</h5>
                     <table style={{tableLayout: 'fixed', width: '100%'}}>
@@ -162,12 +168,15 @@ const ViewPatientPage = () => {
                         </tbody>
                     </table>
                 </div>
+                }
             </div>
             <div className="mb-2">
                 <p className="d-inline h4">Past Consultations</p>
                 <button onClick={() => setIsAddConsultationModalOpen(true)} className="mx-3 d-inline btn btn-outline-primary btn-sm"><i className="bi bi-plus-square-fill"></i></button>
             </div>
-            <Table columns={columns} data={consultations} />
+            { isLoadingConsultations ? <p>Loading...</p> : 
+              <Table columns={columns} data={consultations} />
+            }
             <CustomModal isModalOpen={isDeletePatientModalOpen} handleClose={() => setIsDeletePatientModalOpen(false)}>
                 <p>Are you sure you want to delete this patient?</p>
                 <button onClick={() => deletePatient(pid)} className='btn btn-danger'>confirm</button>

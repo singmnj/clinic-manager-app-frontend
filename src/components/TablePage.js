@@ -8,6 +8,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 const TablePage = () => {
 
     const [patients, setPatients] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,6 +21,7 @@ const TablePage = () => {
         }).then(response => {
             console.log(response.data);
             setPatients(response.data);
+            setIsLoading(false);
         }).catch(error => {
             if(error.message !== 'canceled') {
                 toast("Error occurred while getting Patients");
@@ -81,7 +83,11 @@ const TablePage = () => {
     );
 
     return(
-      <Table columns={columns} data={patients} />
+      <>
+        {
+            isLoading ? <p>Loading...</p> : <Table columns={columns} data={patients} />
+        }
+      </>
     );
 };
 
