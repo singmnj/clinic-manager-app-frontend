@@ -28,11 +28,11 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-		console.log(user, pwd);
+		//console.log(user, pwd);
 		axiosPrivate.post('/auth/login', { username: user, password: pwd }).then(response => {
-			console.log(response?.data);
+			//console.log(response?.data);
 			const accessToken = response?.data?.accessToken;
-			console.log(accessToken);
+			//console.log(accessToken);
 			setAuth({ user, accessToken });
 			setUser('');
 			setPwd('');

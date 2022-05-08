@@ -10,7 +10,8 @@ const Logout = () => {
 
     const logout = () => {
         axiosPrivate.get('/auth/logout').then(response => {
-            console.log(response.data);
+            console.log('logging out');
+            //console.log(response.data);
             navigate('/login');
         }).catch(error => {
             toast("Error occurred while Logging out");
