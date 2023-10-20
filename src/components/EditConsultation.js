@@ -108,7 +108,7 @@ const EditConsultation = ({
 								id="maramCheck"
 								className="form-check-input"
 								{...register("maramTherapyDone")}
-								defaultChecked={consultationDetails.maramTherapyDone === true}
+								defaultChecked={consultationDetails?.maramTherapyDone === true}
 							/>
 						</div>
 					</div>
