@@ -4,7 +4,7 @@ import useAuth from "../hooks/useAuth";
 import axiosPrivate from "../api/axios";
 
 const LoginPage = () => {
-	const { setAuth } = useAuth();
+	const { setAuth, persist, setPersist } = useAuth();
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -25,33 +25,41 @@ const LoginPage = () => {
 		setErrMsg("");
 	}, [user, pwd]);
 
+	const togglePersist = () => {
+		setPersist((prev) => !prev);
+	};
+
+	useEffect(() => {
+		localStorage.setItem("persist", persist);
+	}, [persist]);
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		//console.log(user, pwd);
-		axiosPrivate
-			.post("/auth/login", { username: user, password: pwd })
-			.then((response) => {
-				//console.log(response?.data);
-				const accessToken = response?.data?.accessToken;
-				//console.log(accessToken);
-				setAuth({ user, accessToken });
-				setUser("");
-				setPwd("");
-				navigate(from, { replace: true });
-			})
-			.catch((err) => {
-				console.error(err);
-				if (!err?.response) {
-					setErrMsg("No Server Response");
-				} else if (err.response?.status === 400) {
-					setErrMsg("Missing Username or Password");
-				} else if (err.response?.status === 401) {
-					setErrMsg("Unauthorized");
-				} else {
-					setErrMsg("Login Failed");
-				}
-				errRef.current.focus();
+
+		try {
+			const response = await axiosPrivate.post("/auth/login", {
+				username: user,
+				password: pwd,
 			});
+			console.log(JSON.stringify(response?.data));
+			const accessToken = response?.data?.accessToken;
+			setAuth({ user, accessToken });
+			setUser("");
+			setPwd("");
+			navigate(from, { replace: true });
+		} catch (err) {
+			console.error(err);
+			if (!err?.response) {
+				setErrMsg("No Server Response");
+			} else if (err.response?.status === 400) {
+				setErrMsg("Missing Username or Password");
+			} else if (err.response?.status === 401) {
+				setErrMsg("Unauthorized");
+			} else {
+				setErrMsg("Login Failed");
+			}
+			errRef.current.focus();
+		}
 	};
 
 	return (
@@ -67,6 +75,7 @@ const LoginPage = () => {
 					<p
 						ref={errRef}
 						className={errMsg ? "alert alert-danger" : "invisible"}
+						aria-live="assertive"
 					>
 						{errMsg}
 					</p>
@@ -103,6 +112,18 @@ const LoginPage = () => {
 							<button className="btn btn-primary" type="submit">
 								Sign In
 							</button>
+						</div>
+						<div className="mx-auto mt-3 form-check">
+							<input
+								type="checkbox"
+								id="persist"
+								onChange={togglePersist}
+								checked={persist}
+								className="form-check-input"
+							/>
+							<label htmlFor="persist" className="form-check-label">
+								Trust This Device
+							</label>
 						</div>
 					</form>
 				</div>

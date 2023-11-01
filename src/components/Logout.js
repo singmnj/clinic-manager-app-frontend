@@ -1,31 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { toast } from "react-toastify";
+import useLogout from "../hooks/useLogout";
 
 const Logout = () => {
-	const axiosPrivate = useAxiosPrivate();
 	const navigate = useNavigate();
+	const logout = useLogout();
 
-	const logout = () => {
-		axiosPrivate
-			.get("/auth/logout")
-			.then((response) => {
-				console.log("logging out");
-				//console.log(response.data);
-				navigate("/login");
-			})
-			.catch((error) => {
-				toast("Error occurred while Logging out");
-			});
+	const signOut = async () => {
+		await logout();
+		navigate("/login");
 	};
 
 	return (
-		<button
-			type="button"
-			className="btn btn-outline-primary"
-			onClick={() => logout()}
-		>
+		<button type="button" className="btn btn-outline-primary" onClick={signOut}>
 			Logout
 		</button>
 	);

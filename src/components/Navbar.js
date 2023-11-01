@@ -22,7 +22,7 @@ const Navbar = () => {
 						</NavLink>
 					</li>
 					<li>
-						<NavLink to="/add_patient" className="nav-link text-white">
+						<NavLink to="/add-patient" className="nav-link text-white">
 							Add Patient
 						</NavLink>
 					</li>
